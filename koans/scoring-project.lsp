@@ -49,9 +49,29 @@
 ;
 ; Your goal is to write the score method.
 
+
+(defun score-set-of-three (dice count)
+  (case dice
+    (1 (* count 1000))
+    (t (* count 100 dice))))
+
+(defun score-not-in-set (dice count)
+  (case dice
+    (1 (* count 100))
+    (5 (* count 50))
+    (t 0)))
+
 (defun score (dice)
-  ; You need to write this method
-)
+
+  (let ((d (make-hash-table)))
+    (dolist (x dice)
+      (let ((v (gethash x d 0)))
+        (setf (gethash x d 0) (1+ v))))
+
+  (loop for k being the hash-key in d using (hash-value v)
+        sum (multiple-value-bind (set-of-three not-in-set) (floor v 3)
+              (+ (score-set-of-three k set-of-three)
+                 (score-not-in-set k not-in-set))))))
 
 (define-test test-score-of-an-empty-list-is-zero
     (assert-equal 0 (score nil)))
